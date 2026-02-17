@@ -35,6 +35,10 @@ public interface BotPlayer {
     void interactEntity(Entity target);
     void swapHands();
 
+    // Communication
+    void chat(String message);
+    void performCommand(String command);
+
     // Inventory
     void dropItem(boolean entireStack);
     void dropInventory();
