@@ -145,6 +145,16 @@ NMS implementations are version-isolated. To add a new MC version, create a new 
 - `@Service` + constructor injection (IoC)
 - `@UltiToolsModule` plugin registration
 
+## 致谢 / Acknowledgments
+
+本项目的架构设计和 NMS 实现参考了以下开源项目：
+
+The architecture and NMS implementation of this project were inspired by the following open-source projects:
+
+- **[tanyaofei/minecraft-fakeplayer](https://github.com/tanyaofei/minecraft-fakeplayer)** — 多模块 Maven 架构（`-api`, `-core`, `-v1_21_R1`, `-dist`）、`NMSBridge` 版本抽象接口、`ActionType` 动作枚举、`ActionTicker` 循环动作模式、`BotPlayer` API 设计（移动轴 `zza`/`xxa`、物理 tick 等）均参考自该项目。/ Multi-module Maven architecture, `NMSBridge` version abstraction interface, `ActionType` enum, `ActionTicker` repeating action pattern, and `BotPlayer` API design (movement axes, physics tick) were referenced from this project.
+
+- **[KP56/Fake-Players-Spigot-Plugin](https://github.com/KP56/Fake-Players-Spigot-Plugin)** — `FakeConnection` 使用 Netty `EmbeddedChannel` 模拟假网络连接的核心技术方案、以及假人加入服务器的完整生命周期（`GameProfile` → `ServerPlayer` → 假连接 → 玩家列表注册）参考自该项目。/ The `FakeConnection` pattern using Netty `EmbeddedChannel` to simulate a fake network connection, and the full join lifecycle (GameProfile → ServerPlayer → fake connection → player list registration) were referenced from this project.
+
 ## 构建 / Build
 
 ```bash
