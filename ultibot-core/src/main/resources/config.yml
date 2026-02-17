@@ -1,0 +1,9 @@
+# UltiBot Configuration
+max-bots-per-player: 5
+max-total-bots: 20
+default-skin: "Steve"
+tick-bots: true
+allow-chunk-loading: false
+bot-prefix: "[Bot] "
+auto-remove-on-quit: true
+auto-respawn: true

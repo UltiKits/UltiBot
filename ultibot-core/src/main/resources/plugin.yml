@@ -1,0 +1,7 @@
+name: UltiBot
+version: '${project.version}'
+main: com.ultikits.plugins.ultibot.UltiBotPlugin
+base-package: com.ultikits.plugins.ultibot
+api-version: 620
+authors: [ wisdomme ]
+description: Fake player module — spawn and control server-side bots
