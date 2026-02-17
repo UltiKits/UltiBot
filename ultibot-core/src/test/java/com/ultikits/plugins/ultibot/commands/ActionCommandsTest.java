@@ -115,4 +115,15 @@ class ActionCommandsTest {
             assertThat(captor.getValue()).contains("bot_not_found");
         }
     }
+
+    @Nested
+    @DisplayName("help")
+    class Help {
+        @Test
+        @DisplayName("should send usage info")
+        void shouldSendUsageInfo() {
+            commands.handleHelp(player);
+            verify(player).sendMessage(anyString());
+        }
+    }
 }

@@ -99,6 +99,22 @@ class ActionServiceImplTest {
             actionService.performAction(bot, ActionType.DROP_INVENTORY);
             verify(bot).dropInventory();
         }
+
+        @Test
+        @DisplayName("MINE without target is no-op")
+        void mineIsNoOp() {
+            BotPlayer bot = createMockBot("Alice");
+            actionService.performAction(bot, ActionType.MINE);
+            verifyNoMoreInteractions(bot);
+        }
+
+        @Test
+        @DisplayName("LOOK_AT_NEAREST is no-op at service level")
+        void lookAtNearestIsNoOp() {
+            BotPlayer bot = createMockBot("Alice");
+            actionService.performAction(bot, ActionType.LOOK_AT_NEAREST);
+            verifyNoMoreInteractions(bot);
+        }
     }
 
     @Nested
@@ -170,6 +186,23 @@ class ActionServiceImplTest {
 
             assertThat(t1.isRunning()).isFalse();
             assertThat(t2.isRunning()).isTrue();
+        }
+
+        @Test
+        @DisplayName("tickAll dispatches tick to all active tickers")
+        void tickAllDispatchesAllTickers() {
+            BotPlayer bot = createMockBot("Alice");
+            actionService.startRepeatingAction(bot, ActionType.JUMP, 1);
+            // interval=1 means every tick triggers action
+            actionService.tickAll();
+            verify(bot).jump();
+        }
+
+        @Test
+        @DisplayName("stopAction on nonexistent bot does not throw")
+        void stopActionNonexistentBot() {
+            BotPlayer bot = createMockBot("Ghost");
+            actionService.stopAction(bot, ActionType.JUMP); // no exception
         }
     }
 }
