@@ -30,6 +30,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Run SpigotMC BuildTools
+        uses: SpraxDev/Action-SpigotBuildTools@v4
+        with:
+          versions: '1.21.1'
+          remapped: true
+
       - name: Install parent POM
         run: |
           git clone --depth 1 https://github.com/UltiKits/ultikits-module-parent.git /tmp/parent-pom
@@ -100,6 +106,7 @@ jobs:
         run: npm install -g @ultikits/cli
 
       - name: Publish to UltiCloud
+        continue-on-error: true
         if: steps.check.outputs.EXISTS == 'false'
         env:
           ULTIKITS_TOKEN: ${{ secrets.ULTIKITS_TOKEN }}
