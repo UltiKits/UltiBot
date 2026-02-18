@@ -11,9 +11,8 @@ import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 public class NMSBridgeV1_21_R1 implements NMSBridge {
@@ -25,22 +24,33 @@ public class NMSBridgeV1_21_R1 implements NMSBridge {
 
     @Override
     public BotPlayer createBot(String name, UUID uuid, Location spawnLocation) {
-        MinecraftServer server = ((CraftServer) Bukkit.getServer()).getServer();
-        ServerLevel level = ((CraftWorld) spawnLocation.getWorld()).getHandle();
-        GameProfile profile = new GameProfile(uuid, name);
+        try {
+            // Use reflection to access CraftBukkit classes (Paper 1.21+ removed versioned packages)
+            Object craftServer = Bukkit.getServer();
+            Method getServerMethod = craftServer.getClass().getMethod("getServer");
+            MinecraftServer server = (MinecraftServer) getServerMethod.invoke(craftServer);
 
-        ServerPlayer nmsPlayer = new ServerPlayer(server, level, profile,
-                ClientInformation.createDefault());
-        nmsPlayer.absMoveTo(spawnLocation.getX(), spawnLocation.getY(),
-                spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch());
+            Object craftWorld = spawnLocation.getWorld();
+            Method getHandleMethod = craftWorld.getClass().getMethod("getHandle");
+            ServerLevel level = (ServerLevel) getHandleMethod.invoke(craftWorld);
 
-        // Wire up fake connection so server doesn't NPE
-        FakeConnection fakeConn = new FakeConnection();
-        CommonListenerCookie cookie = CommonListenerCookie.createInitial(profile, false);
-        ServerGamePacketListenerImpl listener = new ServerGamePacketListenerImpl(
-                server, fakeConn, nmsPlayer, cookie);
-        nmsPlayer.connection = listener;
+            GameProfile profile = new GameProfile(uuid, name);
 
-        return new BotPlayerV1_21_R1(nmsPlayer, server, fakeConn);
+            ServerPlayer nmsPlayer = new ServerPlayer(server, level, profile,
+                    ClientInformation.createDefault());
+            nmsPlayer.absMoveTo(spawnLocation.getX(), spawnLocation.getY(),
+                    spawnLocation.getZ(), spawnLocation.getYaw(), spawnLocation.getPitch());
+
+            // Wire up fake connection so server doesn't NPE
+            FakeConnection fakeConn = new FakeConnection();
+            CommonListenerCookie cookie = CommonListenerCookie.createInitial(profile, false);
+            ServerGamePacketListenerImpl listener = new ServerGamePacketListenerImpl(
+                    server, fakeConn, nmsPlayer, cookie);
+            nmsPlayer.connection = listener;
+
+            return new BotPlayerV1_21_R1(nmsPlayer, server, fakeConn);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create bot via NMS", e);
+        }
     }
 }

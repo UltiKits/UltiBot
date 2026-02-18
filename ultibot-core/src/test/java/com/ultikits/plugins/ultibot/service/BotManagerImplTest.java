@@ -13,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import org.objenesis.ObjenesisStd;
+
+import java.lang.reflect.Field;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
@@ -33,13 +36,27 @@ class BotManagerImplTest {
     private Location spawnLocation;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         config = new BotConfig();
         lenient().when(world.getName()).thenReturn("world");
         spawnLocation = new Location(world, 0, 64, 0);
         lenient().when(ownerPlayer.getUniqueId()).thenReturn(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         lenient().when(ownerPlayer.getName()).thenReturn("TestOwner");
-        manager = new BotManagerImpl(nmsBridge, config, plugin);
+        // Construct via Objenesis (skips constructor to avoid Bukkit.getBukkitVersion() call)
+        manager = new ObjenesisStd().newInstance(BotManagerImpl.class);
+        setField(manager, "nmsBridge", nmsBridge);
+        setField(manager, "config", config);
+        setField(manager, "plugin", plugin);
+        // Objenesis skips field initializers — initialize maps manually
+        setField(manager, "botsByName", new java.util.concurrent.ConcurrentHashMap<>());
+        setField(manager, "botsByUuid", new java.util.concurrent.ConcurrentHashMap<>());
+        setField(manager, "ownerBots", new java.util.concurrent.ConcurrentHashMap<>());
+    }
+
+    private static void setField(Object target, String fieldName, Object value) throws Exception {
+        Field f = BotManagerImpl.class.getDeclaredField(fieldName);
+        f.setAccessible(true); // NOPMD
+        f.set(target, value);
     }
 
     @Nested

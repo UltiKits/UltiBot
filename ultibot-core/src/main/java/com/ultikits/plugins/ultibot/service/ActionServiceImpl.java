@@ -1,10 +1,12 @@
 package com.ultikits.plugins.ultibot.service;
 
 import com.ultikits.plugins.ultibot.api.*;
+import com.ultikits.ultitools.annotations.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class ActionServiceImpl {
 
     // bot UUID -> (actionType -> ticker)

@@ -3,13 +3,16 @@ package com.ultikits.plugins.ultibot.service;
 import com.ultikits.plugins.ultibot.api.*;
 import com.ultikits.plugins.ultibot.config.BotConfig;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
+import com.ultikits.ultitools.annotations.Service;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class BotManagerImpl {
 
     private final NMSBridge nmsBridge;
@@ -24,11 +27,13 @@ public class BotManagerImpl {
     // owner uuid -> set of bot names
     private final Map<UUID, Set<String>> ownerBots = new ConcurrentHashMap<>();
 
-    public BotManagerImpl(NMSBridge nmsBridge, BotConfig config, UltiToolsPlugin plugin) {
-        this.nmsBridge = nmsBridge;
-        this.config = config;
+    public BotManagerImpl(UltiToolsPlugin plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfig(BotConfig.class);
+        this.nmsBridge = NMSLoader.load(Bukkit.getBukkitVersion(),
+                java.util.logging.Logger.getLogger(plugin.getPluginName()));
     }
+
 
     public BotPlayer spawnBot(String name, Location location, Player owner) {
         if (botsByName.containsKey(name)) {
@@ -52,6 +57,24 @@ public class BotManagerImpl {
         botsByName.put(name, bot);
         botsByUuid.put(bot.getUUID(), bot);
         owned.add(name);
+        bot.join();
+        return bot;
+    }
+
+    public BotPlayer spawnBotNoOwner(String name, Location location) {
+        if (botsByName.containsKey(name)) {
+            return null;
+        }
+        if (botsByName.size() >= config.getMaxTotalBots()) {
+            return null;
+        }
+        UUID botUuid = UUID.randomUUID();
+        BotPlayer bot = nmsBridge.createBot(name, botUuid, location);
+        if (bot == null) {
+            return null;
+        }
+        botsByName.put(name, bot);
+        botsByUuid.put(bot.getUUID(), bot);
         bot.join();
         return bot;
     }

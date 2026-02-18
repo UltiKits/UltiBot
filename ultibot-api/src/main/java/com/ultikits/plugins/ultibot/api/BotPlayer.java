@@ -4,7 +4,10 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface BotPlayer {
@@ -48,4 +51,19 @@ public interface BotPlayer {
     boolean isOnGround();
     boolean isUsingItem();
     int getTickCount();
+
+    // --- Testing support ---
+
+    // Message capture: intercept all messages sent to this bot
+    List<String> getReceivedMessages();
+    void clearMessages();
+
+    // OP management
+    void setOp(boolean op);
+    boolean isOp();
+
+    // GUI interaction
+    void clickSlot(int slot);
+    InventoryView getOpenInventoryView();
+    void closeInventory();
 }

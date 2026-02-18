@@ -3,3 +3,5 @@ target/
 .idea/
 *.class
 docs/plans/
+
+CLAUDE.md
