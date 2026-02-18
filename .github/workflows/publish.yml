@@ -31,7 +31,7 @@ jobs:
           cache: maven
 
       - name: Run SpigotMC BuildTools
-        uses: SpraxDev/Action-SpigotBuildTools@v4
+        uses: SpraxDev/Action-SpigotMC@v5
         with:
           versions: '1.21.1'
           remapped: true
