@@ -13,7 +13,8 @@ import org.bukkit.entity.Player;
 @CmdExecutor(
         permission = "ultibot.action",
         description = "Bot action commands",
-        alias = {"bot"}
+        alias = {"bot"},
+        manualRegister = true
 )
 @CmdTarget(CmdTarget.CmdTargetType.BOTH)
 public class ActionCommands extends AbstractCommandExecutor {

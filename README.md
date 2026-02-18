@@ -37,6 +37,9 @@ UltiBot uses a multi-module Maven architecture that separates API interfaces fro
 | 自动管理 | Auto Management | 主人下线自动移除、死亡自动重生 |
 | 区块加载 | Chunk Loading | 可选让假人保持区块加载 |
 | 前缀标识 | Bot Prefix | Tab 列表和聊天中显示可配置前缀 |
+| 消息捕获 | Message Capture | 通过 Netty 拦截假人收到的聊天消息，用于测试验证 |
+| GUI 交互 | GUI Interaction | 假人可点击物品栏槽位、查看/关闭 GUI，用于测试插件界面 |
+| OP 切换 | OP Toggle | 动态切换假人 OP 状态，无需修改 ops.json |
 
 ## 动作类型 / Action Types
 
@@ -62,6 +65,7 @@ UltiBot uses a multi-module Maven architecture that separates API interfaces fro
 | 命令 | 权限 | 说明 |
 |------|------|------|
 | `/bot spawn <name>` | `ultibot.use` | 在当前位置生成假人 / Spawn bot at your location |
+| `/bot spawnat <name>` | `ultibot.use` | 在控制台指定位置生成假人 / Spawn bot at specified location (console) |
 | `/bot remove <name>` | `ultibot.use` | 移除指定假人 / Remove a bot |
 | `/bot remove all` | `ultibot.use` | 移除所有假人 / Remove all bots |
 | `/bot list` | `ultibot.use` | 列出所有假人 / List all bots |
@@ -82,6 +86,18 @@ UltiBot uses a multi-module Maven architecture that separates API interfaces fro
 | `/bot chat <name> <message>` | `ultibot.use` | 让假人发送聊天消息 / Make bot chat |
 | `/bot cmd <name> <command>` | `ultibot.use` | 让假人执行命令 / Make bot run command |
 | `/bot skin <name> <skinName>` | `ultibot.use` | 更换假人皮肤 / Change bot skin |
+
+### 测试命令 / Testing Commands
+
+| 命令 | 权限 | 说明 |
+|------|------|------|
+| `/bot messages <name>` | `ultibot.use` | 查看假人收到的聊天消息 / View bot's received messages |
+| `/bot clearmsg <name>` | `ultibot.use` | 清空假人消息记录 / Clear bot's message history |
+| `/bot op <name>` | `ultibot.admin` | 给予假人 OP 权限 / Grant bot OP status |
+| `/bot deop <name>` | `ultibot.admin` | 移除假人 OP 权限 / Remove bot OP status |
+| `/bot click <name> <slot>` | `ultibot.use` | 让假人点击物品栏槽位 / Make bot click inventory slot |
+| `/bot inv <name>` | `ultibot.use` | 查看假人当前打开的 GUI / View bot's open inventory |
+| `/bot closeinv <name>` | `ultibot.use` | 关闭假人当前 GUI / Close bot's open inventory |
 
 ### 宏命令 / Macro Commands
 
@@ -137,6 +153,22 @@ NMS 实现按版本分离，添加新版本只需新建 `ultibot-v<version>` 模
 
 NMS implementations are version-isolated. To add a new MC version, create a new `ultibot-v<version>` module implementing the `NMSBridge` interface.
 
+## BotPlayer API
+
+`BotPlayer` 接口提供 27 个方法，分为以下几类：
+
+The `BotPlayer` interface provides 27 methods in the following categories:
+
+| 类别 / Category | 方法 / Methods |
+|----------------|----------------|
+| 生命周期 / Lifecycle | `join()`, `disconnect()`, `tick()`, `respawn()` |
+| 移动 / Movement | `moveTo()`, `setMovement()`, `jump()`, `setSneaking()`, `setSprinting()`, `lookAt()` |
+| 交互 / Interaction | `attack()`, `mine()`, `useItem()`, `interactEntity()`, `swapHands()` |
+| 聊天 / Chat | `chat()`, `performCommand()` |
+| 物品 / Items | `dropItem()`, `dropInventory()`, `selectSlot()` |
+| 状态 / State | `isOnGround()`, `isUsingItem()` |
+| 测试支持 / Testing | `getReceivedMessages()`, `clearMessages()`, `setOp()`, `isOp()`, `clickSlot()`, `getOpenInventoryView()`, `closeInventory()` |
+
 ## UltiTools-API Features Used
 
 - `@ConfigEntity` / `@ConfigEntry` / `@Range` / `@NotEmpty` config validation
@@ -171,4 +203,4 @@ cd Modules/UltiBot
 mvn test
 ```
 
-111 tests, 80.2% instruction coverage (JaCoCo).
+130 tests, 81.9% instruction coverage (JaCoCo).

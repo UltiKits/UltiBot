@@ -3,6 +3,7 @@ package com.ultikits.plugins.ultibot.listener;
 import com.ultikits.plugins.ultibot.api.BotPlayer;
 import com.ultikits.plugins.ultibot.config.BotConfig;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
+import com.ultikits.ultitools.annotations.EventListener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
 
+@EventListener
 public class BotEventListener implements Listener {
 
     private final BotManagerImpl botManager;

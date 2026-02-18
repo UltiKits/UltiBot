@@ -1,5 +1,6 @@
 package com.ultikits.plugins.ultibot.service;
 
+import com.ultikits.ultitools.annotations.Service;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Service
 public class SkinService {
 
     private static final String MOJANG_UUID_URL = "https://api.mojang.com/users/profiles/minecraft/";

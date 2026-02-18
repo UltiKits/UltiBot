@@ -3,10 +3,12 @@ package com.ultikits.plugins.ultibot.service;
 import com.ultikits.plugins.ultibot.api.ActionType;
 import com.ultikits.plugins.ultibot.api.BotPlayer;
 import com.ultikits.plugins.ultibot.model.MacroEntry;
+import com.ultikits.ultitools.annotations.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Service
 public class MacroServiceImpl {
 
     // macroName -> list of entries
