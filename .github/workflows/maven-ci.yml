@@ -1,0 +1,14 @@
+name: Maven CI
+on:
+  push:
+    branches: ['**']
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  ci:
+    uses: UltiKits/ci-workflows/.github/workflows/maven-ci.yml@v1.0.0
+    with:
+      needs-nms: true
+      mc-version: '1.21.1'
+    secrets: inherit

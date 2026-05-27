@@ -2,7 +2,10 @@ package com.ultikits.plugins.ultibot.commands;
 
 import com.ultikits.plugins.ultibot.api.BotPlayer;
 import com.ultikits.plugins.ultibot.config.BotConfig;
+import com.ultikits.plugins.ultibot.service.ActionServiceImpl;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
+import com.ultikits.plugins.ultibot.service.MacroServiceImpl;
+import com.ultikits.plugins.ultibot.service.SkinService;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -27,6 +30,9 @@ class BotCommandsTest {
 
     @Mock private UltiToolsPlugin plugin;
     @Mock private BotManagerImpl botManager;
+    @Mock private ActionServiceImpl actionService;
+    @Mock private MacroServiceImpl macroService;
+    @Mock private SkinService skinService;
     @Mock private Player player;
     @Mock private World world;
     @Mock private BotConfig config;
@@ -41,7 +47,7 @@ class BotCommandsTest {
         when(player.hasPermission(anyString())).thenReturn(true);
         when(botManager.getConfig()).thenReturn(config);
         when(config.getMaxBotsPerPlayer()).thenReturn(5);
-        commands = new BotCommands(plugin, botManager);
+        commands = new BotCommands(plugin, botManager, actionService, macroService, skinService);
     }
 
     @Nested
