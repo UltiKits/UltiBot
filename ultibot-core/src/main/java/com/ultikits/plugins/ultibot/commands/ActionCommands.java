@@ -4,7 +4,7 @@ import com.ultikits.plugins.ultibot.api.ActionType;
 import com.ultikits.plugins.ultibot.api.BotPlayer;
 import com.ultikits.plugins.ultibot.service.ActionServiceImpl;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
-import com.ultikits.ultitools.abstracts.AbstractCommandExecutor;
+import com.ultikits.ultitools.abstracts.command.BaseCommandExecutor;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
 import com.ultikits.ultitools.annotations.command.*;
 import org.bukkit.command.CommandSender;
@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
         manualRegister = true
 )
 @CmdTarget(CmdTarget.CmdTargetType.BOTH)
-public class ActionCommands extends AbstractCommandExecutor {
+public class ActionCommands extends BaseCommandExecutor {
 
     private final UltiToolsPlugin plugin;
     private final BotManagerImpl botManager;

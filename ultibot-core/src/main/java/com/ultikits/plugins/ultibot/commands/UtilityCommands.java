@@ -5,7 +5,7 @@ import com.ultikits.plugins.ultibot.model.MacroEntry;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
 import com.ultikits.plugins.ultibot.service.MacroServiceImpl;
 import com.ultikits.plugins.ultibot.service.SkinService;
-import com.ultikits.ultitools.abstracts.AbstractCommandExecutor;
+import com.ultikits.ultitools.abstracts.command.BaseCommandExecutor;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
 import com.ultikits.ultitools.annotations.command.*;
 import org.bukkit.Material;
@@ -25,7 +25,7 @@ import java.util.Set;
         manualRegister = true
 )
 @CmdTarget(CmdTarget.CmdTargetType.BOTH)
-public class UtilityCommands extends AbstractCommandExecutor {
+public class UtilityCommands extends BaseCommandExecutor {
 
     private final UltiToolsPlugin plugin;
     private final BotManagerImpl botManager;

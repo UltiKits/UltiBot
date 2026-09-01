@@ -7,7 +7,7 @@ import com.ultikits.plugins.ultibot.service.ActionServiceImpl;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
 import com.ultikits.plugins.ultibot.service.MacroServiceImpl;
 import com.ultikits.plugins.ultibot.service.SkinService;
-import com.ultikits.ultitools.abstracts.AbstractCommandExecutor;
+import com.ultikits.ultitools.abstracts.command.BaseCommandExecutor;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
 import com.ultikits.ultitools.annotations.command.*;
 import org.bukkit.Bukkit;
@@ -31,7 +31,7 @@ import java.util.UUID;
         alias = {"bot"}
 )
 @CmdTarget(CmdTarget.CmdTargetType.BOTH)
-public class BotCommands extends AbstractCommandExecutor {
+public class BotCommands extends BaseCommandExecutor {
 
     private final UltiToolsPlugin plugin;
     private final BotManagerImpl botManager;
