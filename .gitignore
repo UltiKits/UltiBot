@@ -33,3 +33,7 @@ Thumbs.db
 # Project
 docs/plans/
 CLAUDE.md
+
+# Tooling artifacts
+.factorypath
+PROJECT.md
