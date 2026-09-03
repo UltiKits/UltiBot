@@ -70,6 +70,64 @@ class SkinServiceTest {
             assertThat(data.getValue()).isEqualTo("dGV4dHVyZVZhbHVl");
             assertThat(data.getSignature()).isNull();
         }
+
+        @Test
+        @DisplayName("should return null when properties value is not an array")
+        void shouldReturnNullWhenPropertiesIsNotArray() {
+            String json = "{\"id\":\"abc\",\"name\":\"Test\",\"properties\":\"oops\"}";
+            SkinService.SkinData data = skinService.parseSkinTexture(json);
+            assertThat(data).isNull();
+        }
+
+        @Test
+        @DisplayName("should return null when the properties array has no textures entry")
+        void shouldReturnNullWhenNoTexturesEntry() {
+            String json = "{\"id\":\"abc\",\"name\":\"Test\","
+                    + "\"properties\":[{\"name\":\"other\",\"value\":\"x\"}]}";
+            SkinService.SkinData data = skinService.parseSkinTexture(json);
+            assertThat(data).isNull();
+        }
+
+        @Test
+        @DisplayName("should return null when the textures entry has no value key")
+        void shouldReturnNullWhenValueKeyMissing() {
+            String json = "{\"id\":\"abc\",\"name\":\"Test\","
+                    + "\"properties\":[{\"name\":\"textures\",\"signature\":\"onlysig\"}]}";
+            SkinService.SkinData data = skinService.parseSkinTexture(json);
+            assertThat(data).isNull();
+        }
+
+        @Test
+        @DisplayName("should return null when the value entry has no colon after its key")
+        void shouldReturnNullWhenValueHasNoColon() {
+            String json = "{\"properties\":[{\"name\":\"textures\",\"value\"}]}";
+            SkinService.SkinData data = skinService.parseSkinTexture(json);
+            assertThat(data).isNull();
+        }
+
+        @Test
+        @DisplayName("should return null when the value is not quoted")
+        void shouldReturnNullWhenValueNotQuoted() {
+            String json = "{\"properties\":[{\"name\":\"textures\",\"value\":123}]}";
+            SkinService.SkinData data = skinService.parseSkinTexture(json);
+            assertThat(data).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("fetchSkin")
+    class FetchSkin {
+
+        @Test
+        @DisplayName("should return the cached skin without performing a fresh lookup")
+        void shouldReturnCachedSkinWithoutFreshLookup() {
+            SkinService.SkinData data = new SkinService.SkinData("cachedVal", "cachedSig");
+            skinService.cacheSkin("Alice", data);
+
+            SkinService.SkinData result = skinService.fetchSkin("Alice", null);
+
+            assertThat(result).isSameAs(data);
+        }
     }
 
     @Nested
