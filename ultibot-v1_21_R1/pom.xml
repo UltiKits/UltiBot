@@ -12,6 +12,14 @@
     <artifactId>ultibot-v1_21_R1</artifactId>
     <name>UltiBot NMS 1.21-1.21.1</name>
 
+    <!-- Coverage: not measured, and deliberately so (phase 09 D-10 exclusion). This submodule
+         depends on a BuildTools-produced remapped-mojang Spigot artifact (see the spigot dependency
+         below, classifier remapped-mojang) that is built on the CI runner from source, not resolved
+         from any Maven repository a plain local build can reach, so it cannot execute (compile or
+         test) in a runner that has not first run SpigotMC BuildTools for this exact Minecraft
+         version. This is a capability limit, not a coverage judgement: no coverage-instrumentation
+         plugin reference is added here, and none should be. -->
+
     <properties>
         <!-- NMS module needs Java 21 to compile against 1.21.x server classes -->
         <java.version>21</java.version>
