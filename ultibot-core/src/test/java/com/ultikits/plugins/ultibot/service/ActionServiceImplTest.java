@@ -204,5 +204,16 @@ class ActionServiceImplTest {
             BotPlayer bot = createMockBot("Ghost");
             actionService.stopAction(bot, ActionType.JUMP); // no exception
         }
+
+        @Test
+        @DisplayName("stopAction for an action type the bot never started leaves other tickers running")
+        void stopActionForNeverStartedType() {
+            BotPlayer bot = createMockBot("Alice");
+            ActionTicker jumpTicker = actionService.startRepeatingAction(bot, ActionType.JUMP, 20);
+
+            actionService.stopAction(bot, ActionType.SNEAK); // bot has tickers, but not this type
+
+            assertThat(jumpTicker.isRunning()).isTrue();
+        }
     }
 }
