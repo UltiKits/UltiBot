@@ -3,6 +3,7 @@ package com.ultikits.plugins.ultibot.service;
 import com.ultikits.plugins.ultibot.api.*;
 import com.ultikits.plugins.ultibot.config.BotConfig;
 import com.ultikits.ultitools.abstracts.UltiToolsPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -57,6 +58,29 @@ class BotManagerImplTest {
         Field f = BotManagerImpl.class.getDeclaredField(fieldName);
         f.setAccessible(true); // NOPMD
         f.set(target, value);
+    }
+
+    @Nested
+    @DisplayName("constructor")
+    class Constructor {
+
+        @Test
+        @DisplayName("should initialize config from plugin and degrade gracefully when no NMS bridge is available")
+        void shouldInitializeFromPluginConfig() {
+            BotConfig realConfig = new BotConfig();
+            when(plugin.getConfig(BotConfig.class)).thenReturn(realConfig);
+            when(plugin.getPluginName()).thenReturn("UltiBot");
+
+            try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+                // A version absent from NMSLoader's map — the constructor must not throw,
+                // it must degrade to a null NMS bridge instead.
+                bukkit.when(Bukkit::getBukkitVersion).thenReturn("1.16.5-R0.1-SNAPSHOT");
+
+                BotManagerImpl realManager = new BotManagerImpl(plugin);
+
+                assertThat(realManager.getConfig()).isSameAs(realConfig);
+            }
+        }
     }
 
     @Nested
