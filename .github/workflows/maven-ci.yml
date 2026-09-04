@@ -28,7 +28,7 @@ jobs:
             spigot-nms-${{ runner.os }}-mc1.21.1-jdk21-
       - name: Provision remapped-mojang via BuildTools (runs only on cache miss)
         if: ${{ steps.nms-cache.outputs.cache-hit != 'true' }}
-        uses: SpraxDev/Action-SpigotMC@6419bc4cdfb60d37bd3f541f6c8d5be60e6e0933  # v5.3.0
+        uses: SpraxDev/Action-SpigotMC@098b034010082ba7abc32246f6cc58d6934d370b  # v5.3.3
         with:
           versions: '1.21.1'
           remapped: true
