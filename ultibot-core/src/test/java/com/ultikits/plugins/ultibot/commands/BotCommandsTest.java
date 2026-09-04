@@ -273,7 +273,11 @@ class BotCommandsTest {
             verify(botManager).spawnBotNoOwner("Alice", spawnLoc);
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             verify(sender).sendMessage(captor.capture());
-            assertThat(captor.getValue()).contains("bot_spawned");
+            // isEqualTo, not contains: under the class's i18n(anyString()) stub the message is
+            // exactly the raw key with no placeholder substitution, so a mistyped/renamed key
+            // like "bot_spawned_BROKEN" would still satisfy .contains("bot_spawned") but fails
+            // an exact match — .contains() alone does not pin the i18n key used on this path.
+            assertThat(captor.getValue()).isEqualTo("bot_spawned");
         }
 
         @Test
@@ -900,13 +904,23 @@ class BotCommandsTest {
             BotPlayer mockBot = mock(BotPlayer.class);
             when(botManager.getBot("Alice")).thenReturn(mockBot);
             when(macroService.startRecording(mockBot, "test_macro")).thenReturn(true);
+            // Override the generic i18n(anyString()) stub with a templated value so the
+            // {0}/{1} placeholder substitution in onMacroRecord is actually exercised here.
+            // Without this, plugin.i18n(...) just echoes the raw key back with no "{1}"
+            // substring for .replace("{1}", ...) to act on, so both branches of
+            // onMacroRecord produce the identical literal string "bot_macro_recording" and
+            // no assertion on the captured message can tell them apart.
+            when(plugin.i18n("bot_macro_recording")).thenReturn("bot_macro_recording: {0} {1}");
 
             commands.onMacroRecord(sender, "Alice", "test_macro");
 
             verify(macroService).startRecording(mockBot, "test_macro");
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             verify(sender).sendMessage(captor.capture());
-            assertThat(captor.getValue()).contains("bot_macro_recording");
+            // Pin the differentiator (the interpolated macro name), not just the shared i18n
+            // key both branches use — a swapped if/!started body would still contain the key.
+            assertThat(captor.getValue()).contains("test_macro");
+            assertThat(captor.getValue()).doesNotContain("already recording");
         }
 
         @Test
@@ -916,13 +930,18 @@ class BotCommandsTest {
             BotPlayer mockBot = mock(BotPlayer.class);
             when(botManager.getBot("Alice")).thenReturn(mockBot);
             when(macroService.startRecording(mockBot, "test_macro")).thenReturn(false);
+            // See shouldStartRecording for why the i18n stub needs a "{1}" placeholder here.
+            when(plugin.i18n("bot_macro_recording")).thenReturn("bot_macro_recording: {0} {1}");
 
             commands.onMacroRecord(sender, "Alice", "test_macro");
 
             verify(macroService).startRecording(mockBot, "test_macro");
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             verify(sender).sendMessage(captor.capture());
-            assertThat(captor.getValue()).contains("bot_macro_recording");
+            // Pin the differentiator (the "already recording" literal), not just the shared
+            // i18n key both branches use — a swapped if/!started body would still contain it.
+            assertThat(captor.getValue()).contains("already recording");
+            assertThat(captor.getValue()).doesNotContain("test_macro");
         }
 
         @Test
