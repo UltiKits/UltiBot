@@ -12,6 +12,12 @@
     <artifactId>UltiBot</artifactId>
     <name>UltiBot Distribution</name>
 
+    <!-- Coverage: not measured, and deliberately so (phase 09 D-10 exclusion). This submodule has
+         no src/main or src/test tree at all: it exists only to shade ultibot-api, ultibot-core and
+         ultibot-v1_21_R1 into the distributable jar (see the shade execution below). There is no
+         source here to instrument or gate: no coverage-instrumentation plugin reference is added
+         here, and none should be. -->
+
     <dependencies>
         <dependency>
             <groupId>com.ultikits.plugins</groupId>

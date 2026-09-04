@@ -138,6 +138,18 @@ class UtilityCommandsTest {
             verify(player).sendMessage(captor.capture());
             assertThat(captor.getValue()).contains("bot_skin_failed");
         }
+
+        @Test
+        @DisplayName("should send error for unknown bot")
+        void shouldSendErrorForUnknownBot() {
+            when(botManager.getBot("Ghost")).thenReturn(null);
+
+            commands.onSkin(player, "Ghost", "Notch");
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player).sendMessage(captor.capture());
+            assertThat(captor.getValue()).contains("bot_not_found");
+        }
     }
 
     @Nested
@@ -409,6 +421,31 @@ class UtilityCommandsTest {
         }
 
         @Test
+        @DisplayName("should fall back to material name when item has no display name")
+        void shouldFallBackToMaterialName() {
+            BotPlayer mockBot = mock(BotPlayer.class);
+            InventoryView mockView = mock(InventoryView.class);
+            Inventory mockInv = mock(Inventory.class);
+            ItemStack mockItem = mock(ItemStack.class);
+
+            when(botManager.getBot("Alice")).thenReturn(mockBot);
+            when(mockBot.getOpenInventoryView()).thenReturn(mockView);
+            when(mockView.getTopInventory()).thenReturn(mockInv);
+            when(mockView.getTitle()).thenReturn("Test GUI");
+            when(mockInv.getSize()).thenReturn(1);
+            when(mockInv.getItem(0)).thenReturn(mockItem);
+            when(mockItem.getType()).thenReturn(Material.DIAMOND);
+            when(mockItem.getAmount()).thenReturn(1);
+            when(mockItem.hasItemMeta()).thenReturn(false);
+
+            commands.onInventory(player, "Alice");
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player, atLeast(2)).sendMessage(captor.capture());
+            assertThat(captor.getAllValues().get(1)).contains("DIAMOND");
+        }
+
+        @Test
         @DisplayName("should show empty inventory")
         void shouldShowEmptyInventory() {
             BotPlayer mockBot = mock(BotPlayer.class);
@@ -545,6 +582,58 @@ class UtilityCommandsTest {
             ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
             verify(player).sendMessage(captor.capture());
             assertThat(captor.getValue()).contains("bot_macro_not_found");
+        }
+
+        @Test
+        @DisplayName("should send error for unknown bot on record")
+        void shouldSendErrorForUnknownBotOnRecord() {
+            when(botManager.getBot("Ghost")).thenReturn(null);
+
+            commands.onMacroRecord(player, "Ghost", "test_macro");
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player).sendMessage(captor.capture());
+            assertThat(captor.getValue()).contains("bot_not_found");
+        }
+
+        @Test
+        @DisplayName("should send error for unknown bot on stop")
+        void shouldSendErrorForUnknownBotOnStop() {
+            when(botManager.getBot("Ghost")).thenReturn(null);
+
+            commands.onMacroStop(player, "Ghost");
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player).sendMessage(captor.capture());
+            assertThat(captor.getValue()).contains("bot_not_found");
+        }
+
+        @Test
+        @DisplayName("should send error for unknown bot on play")
+        void shouldSendErrorForUnknownBotOnPlay() {
+            when(botManager.getBot("Ghost")).thenReturn(null);
+
+            commands.onMacroPlay(player, "Ghost", "test");
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player).sendMessage(captor.capture());
+            assertThat(captor.getValue()).contains("bot_not_found");
+        }
+    }
+
+    @Nested
+    @DisplayName("help")
+    class Help {
+
+        @Test
+        @DisplayName("should print usage lines")
+        void shouldPrintUsageLines() {
+            commands.handleHelp(player);
+
+            ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+            verify(player, atLeast(2)).sendMessage(captor.capture());
+            assertThat(captor.getAllValues().get(0)).contains("usage_chat");
+            assertThat(captor.getAllValues().get(1)).contains("usage_cmd");
         }
     }
 }

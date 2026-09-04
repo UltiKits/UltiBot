@@ -1,6 +1,10 @@
 package com.ultikits.plugins.ultibot.service;
 
+import com.ultikits.plugins.ultibot.api.NMSBridge;
 import org.junit.jupiter.api.*;
+
+import java.util.logging.Logger;
+
 import static org.assertj.core.api.Assertions.*;
 
 @DisplayName("NMSLoader")
@@ -90,6 +94,34 @@ class NMSLoaderTest {
         void shouldHandlePlain() {
             String version = NMSLoader.extractMinecraftVersion("1.20.4");
             assertThat(version).isEqualTo("1.20.4");
+        }
+    }
+
+    @Nested
+    @DisplayName("load")
+    class Load {
+
+        @Test
+        @DisplayName("should return null and log a warning for an unsupported MC version")
+        void shouldReturnNullForUnsupportedVersion() {
+            Logger logger = Logger.getLogger("NMSLoaderTest.unsupported");
+
+            NMSBridge bridge = NMSLoader.load("1.8.8-R0.1-SNAPSHOT", logger);
+
+            assertThat(bridge).isNull();
+        }
+
+        @Test
+        @DisplayName("should return null when the mapped NMS module class is not on the classpath")
+        void shouldReturnNullWhenModuleClassMissing() {
+            Logger logger = Logger.getLogger("NMSLoaderTest.missingClass");
+
+            // 1.21.1 maps to a real class name, but the ultibot-v1_21_R1 module (which provides
+            // it) is a separate, deliberately-unmeasured Maven module (see its pom.xml) not on
+            // ultibot-core's test classpath -- this exercises the ClassNotFoundException path.
+            NMSBridge bridge = NMSLoader.load("1.21.1-R0.1-SNAPSHOT", logger);
+
+            assertThat(bridge).isNull();
         }
     }
 }

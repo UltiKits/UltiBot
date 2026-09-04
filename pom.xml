@@ -23,7 +23,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <ultitools.version>6.2.1</ultitools.version>
+        <ultitools.version>6.3.0-SNAPSHOT</ultitools.version>
         <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
         <lombok.version>1.18.38</lombok.version>
         <junit.version>5.10.0</junit.version>
@@ -165,6 +165,12 @@
         <repository>
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
+        </repository>
+        <repository>
+            <id>central-snapshots</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
         </repository>
     </repositories>
 </project>

@@ -41,6 +41,66 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
+            <!-- ultibot-api had no jacoco reference at all before this: five main classes and one
+                 test class produced no report and no gate, which a green build cannot be told apart
+                 from a genuinely low-coverage one. This is the D-10 per-submodule measurement this
+                 reactor is built around; see 09-GATE-SEMANTICS.md section C2 for what an unmeasured
+                 (as opposed to below-threshold) bundle looks like. -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!-- D-07: the GUI layer is verified by Phase 10's real-machine UAT instead
+                                 of by this gate. ultibot-api has no gui package, so this pattern is
+                                 inert here; it is written for comparability with the other measured
+                                 module poms, per 09-CONVENTIONS.md section 5. This is CheckMojo's own
+                                 execution-scoped excludes (a sibling of <rules>), not a plugin-level
+                                 <configuration> block; see 09-GATE-SEMANTICS.md finding F-1: a
+                                 <rule><excludes> entry is a structural no-op for a BUNDLE-element rule,
+                                 since BundleChecker matches includes/excludes against the bundle's own
+                                 name, not per-class names. -->
+                            <excludes>
+                                <exclude>**/gui/**</exclude>
+                            </excludes>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.90</minimum>
+                                        </limit>
+                                        <limit>
+                                            <counter>BRANCH</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.80</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>
