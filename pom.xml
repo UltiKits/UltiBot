@@ -24,7 +24,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ultitools.version>6.3.0-SNAPSHOT</ultitools.version>
-        <spigot.version>1.20.4-R0.1-SNAPSHOT</spigot.version>
+        <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         <lombok.version>1.18.38</lombok.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.5.0</mockito.version>
@@ -58,9 +58,9 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.spigotmc</groupId>
-                <artifactId>spigot-api</artifactId>
-                <version>${spigot.version}</version>
+                <groupId>io.papermc.paper</groupId>
+                <artifactId>paper-api</artifactId>
+                <version>${paper.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -155,8 +155,8 @@
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
