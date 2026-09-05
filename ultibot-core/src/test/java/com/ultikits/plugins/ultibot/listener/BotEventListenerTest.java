@@ -3,6 +3,8 @@ package com.ultikits.plugins.ultibot.listener;
 import com.ultikits.plugins.ultibot.api.BotPlayer;
 import com.ultikits.plugins.ultibot.config.BotConfig;
 import com.ultikits.plugins.ultibot.service.BotManagerImpl;
+import net.kyori.adventure.text.Component;
+import org.bukkit.damage.DamageSource;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -99,7 +101,7 @@ class BotEventListenerTest {
             BotPlayer botPlayer = mock(BotPlayer.class);
             when(botManager.getBot(deadUuid)).thenReturn(botPlayer);
 
-            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, Collections.emptyList(), 0, "died");
+            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, mock(DamageSource.class), Collections.emptyList(), 0, Component.text("died"), false);
             listener.onPlayerDeath(event);
 
             verify(botPlayer).respawn();
@@ -116,7 +118,7 @@ class BotEventListenerTest {
             BotPlayer botPlayer = mock(BotPlayer.class);
             when(botManager.getBot(deadUuid)).thenReturn(botPlayer);
 
-            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, Collections.emptyList(), 0, "died");
+            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, mock(DamageSource.class), Collections.emptyList(), 0, Component.text("died"), false);
             listener.onPlayerDeath(event);
 
             verify(botPlayer, never()).respawn();
@@ -131,7 +133,7 @@ class BotEventListenerTest {
             when(deadPlayer.getUniqueId()).thenReturn(deadUuid);
             when(botManager.getBot(deadUuid)).thenReturn(null);
 
-            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, Collections.emptyList(), 0, "died");
+            PlayerDeathEvent event = new PlayerDeathEvent(deadPlayer, mock(DamageSource.class), Collections.emptyList(), 0, Component.text("died"), false);
             listener.onPlayerDeath(event);
 
             // No bot to respawn — no exceptions
