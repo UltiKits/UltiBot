@@ -88,6 +88,22 @@ public class NMSLoader {
                             + ") but that class is not present in this build. This is a build "
                             + "defect (a declared version with no bridge module behind it), not "
                             + "an unsupported-version refusal.", e);
+        } catch (LinkageError e) {
+            // 13-REVIEW-UltiBot.md WR-01: the declared class IS present and Class.forName
+            // loads its bytes, but resolving/linking a type it references -- a net.minecraft.*
+            // internal signature, exactly the kind of thing NMSBridgeV1_21_R1's own comments
+            // call out ("Paper 1.21+ removed versioned packages") -- fails instead
+            // (NoClassDefFoundError, ExceptionInInitializerError, etc.). Without this catch the
+            // Error propagates raw past load(), past SimpleContainer.createBean's
+            // catch (Exception e) (which doesn't catch Error either), and surfaces to the
+            // operator as an opaque "Failed to create bean: botManagerImpl" that names neither
+            // the detected version nor the class that failed -- the exact diagnostic-quality gap
+            // this plan exists to close, just from a different failure mode than a missing class.
+            throw new PluginModuleException(
+                    "UltiBot's bridge for MC " + mcVersion + " (" + className + ") is present in "
+                            + "this build but failed to link -- likely a server-internal API "
+                            + "mismatch (e.g. a net.minecraft.* signature this bridge references "
+                            + "no longer matches the running server). " + e, e);
         } catch (PluginModuleException e) {
             throw e;
         } catch (Exception e) {
