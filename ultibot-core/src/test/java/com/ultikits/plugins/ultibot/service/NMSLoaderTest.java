@@ -136,6 +136,35 @@ class NMSLoaderTest {
                 versionMap.remove("9.9.9");
             }
         }
+
+        @Test
+        @DisplayName("should refuse by name, not fall through to a generic wrapper, when a declared bridge is present but fails to link")
+        void shouldRefuseByNameWhenDeclaredClassFailsToLink() throws Exception {
+            // 13-REVIEW-UltiBot.md WR-01: the review's own traced propagation path shows that
+            // without a LinkageError catch here, this exact failure loses its version-naming
+            // message on the way up -- SimpleContainer.createBean's catch (Exception e) doesn't
+            // catch Error/LinkageError either, so it would propagate raw out of load() and out of
+            // BotManagerImpl's constructor, surfacing to the operator as an opaque
+            // "Failed to create bean: botManagerImpl" with no version or class name at all.
+            // NMSBridgeBrokenlink (test-only) reproduces the real NoClassDefFoundError this PR's
+            // ledger documents hitting from Class.forName on the real bridge class, deterministically,
+            // via a static initializer that throws an Error (propagated as-is per JLS 12.4.2, not
+            // wrapped in ExceptionInInitializerError).
+            Field field = NMSLoader.class.getDeclaredField("VERSION_MAP");
+            field.setAccessible(true);
+            @SuppressWarnings("unchecked")
+            Map<String, String> versionMap = (Map<String, String>) field.get(null);
+            versionMap.put("7.7.7", "brokenlink");
+            try {
+                Logger logger = Logger.getLogger("NMSLoaderTest.declaredButFailsToLink");
+                assertThatThrownBy(() -> NMSLoader.load("7.7.7-R0.1-SNAPSHOT", logger))
+                    .isInstanceOf(PluginModuleException.class)
+                    .hasMessageContaining("7.7.7")
+                    .hasMessageContaining("com.ultikits.plugins.ultibot.nms.brokenlink.NMSBridgeBrokenlink");
+            } finally {
+                versionMap.remove("7.7.7");
+            }
+        }
     }
 
     @Nested
