@@ -25,6 +25,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <ultitools.version>6.3.0-SNAPSHOT</ultitools.version>
         <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
+        <!-- 13-REVIEW-UltiBot.md WR-02: single source of truth for the remapped-mojang Spigot
+             version. ultibot-v1_21_R1/pom.xml (provided scope, needed to compile the real bridge)
+             and ultibot-core/pom.xml (test scope, needed so tests can link the bridge that Maven's
+             non-transitive `provided` scope would otherwise hide) both reference this property
+             instead of hand-copying the literal coordinate, so a future bump of one cannot
+             desynchronise from the other. -->
+        <ultibot.v1_21_R1.spigot.version>1.21.1-R0.1-SNAPSHOT</ultibot.v1_21_R1.spigot.version>
         <lombok.version>1.18.38</lombok.version>
         <junit.version>5.10.0</junit.version>
         <mockito.version>5.5.0</mockito.version>
