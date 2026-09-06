@@ -30,6 +30,29 @@
             <artifactId>lombok</artifactId>
         </dependency>
         <!-- Test -->
+        <!-- 13-10/FIX-05: test-scope only, so NMSLoaderTest#everyDeclaredVersionMapsToABridgeThatExists
+             can prove the version table's one built entry actually resolves a real bridge class,
+             not merely a same-named test double. Does not affect ultibot-core's shipped artifact;
+             ultibot-dist already depends on this module separately for the real shaded jar. -->
+        <dependency>
+            <groupId>com.ultikits.plugins</groupId>
+            <artifactId>ultibot-v1_21_R1</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- ultibot-v1_21_R1's own remapped-mojang NMS dependency is `provided` scope there, and
+             provided-scope dependencies are not transitive in Maven, so without redeclaring it
+             here, loading NMSBridgeV1_21_R1 above fails bytecode verification (NoClassDefFoundError
+             on a net.minecraft.* type referenced from a method the test never calls, because the
+             JVM verifier resolves every method's referenced types at class-preparation time, not
+             lazily per invocation). Same groupId/artifactId/version/classifier as
+             ultibot-v1_21_R1/pom.xml. -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <classifier>remapped-mojang</classifier>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
