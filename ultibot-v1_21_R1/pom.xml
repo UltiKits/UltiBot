@@ -35,7 +35,10 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.21.1-R0.1-SNAPSHOT</version>
+            <!-- 13-REVIEW-UltiBot.md WR-02: version hoisted to the reactor root pom.xml's
+                 ultibot.v1_21_R1.spigot.version property; see that file for why, and keep
+                 ultibot-core/pom.xml's test-scope copy of this dependency on the same property. -->
+            <version>${ultibot.v1_21_R1.spigot.version}</version>
             <classifier>remapped-mojang</classifier>
             <scope>provided</scope>
         </dependency>

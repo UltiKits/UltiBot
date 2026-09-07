@@ -65,20 +65,40 @@ class BotManagerImplTest {
     class Constructor {
 
         @Test
-        @DisplayName("should initialize config from plugin and degrade gracefully when no NMS bridge is available")
+        @DisplayName("should initialize config from plugin when a supported NMS bridge is available")
         void shouldInitializeFromPluginConfig() {
             BotConfig realConfig = new BotConfig();
             when(plugin.getConfig(BotConfig.class)).thenReturn(realConfig);
             when(plugin.getPluginName()).thenReturn("UltiBot");
 
             try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
-                // A version absent from NMSLoader's map — the constructor must not throw,
-                // it must degrade to a null NMS bridge instead.
-                bukkit.when(Bukkit::getBukkitVersion).thenReturn("1.16.5-R0.1-SNAPSHOT");
+                bukkit.when(Bukkit::getBukkitVersion).thenReturn("1.21.1-R0.1-SNAPSHOT");
 
                 BotManagerImpl realManager = new BotManagerImpl(plugin);
 
                 assertThat(realManager.getConfig()).isSameAs(realConfig);
+            }
+        }
+
+        @Test
+        @DisplayName("13-10/FIX-05: should refuse to construct on an unsupported version, naming it, instead of degrading to a null NMS bridge")
+        void shouldRefuseOnUnsupportedVersionInsteadOfDegrading() {
+            when(plugin.getConfig(BotConfig.class)).thenReturn(new BotConfig());
+            when(plugin.getPluginName()).thenReturn("UltiBot");
+
+            try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+                // A version absent from NMSLoader's narrowed map. Before 13-10/FIX-05 the
+                // constructor degraded silently to a null nmsBridge field, which meant UltiBot
+                // loaded successfully and only failed -- with no clear cause -- the first time an
+                // operator tried to spawn a bot. It now refuses outright, so PluginManager's own
+                // bean-construction failure handling refuses to register the whole plugin and logs
+                // the reason by name (see NMSLoader#load's javadoc).
+                bukkit.when(Bukkit::getBukkitVersion).thenReturn("1.16.5-R0.1-SNAPSHOT");
+
+                assertThatThrownBy(() -> new BotManagerImpl(plugin))
+                    .isInstanceOf(com.ultikits.ultitools.exceptions.PluginModuleException.class)
+                    .hasMessageContaining("1.16.5")
+                    .hasMessageContaining("1.21.1");
             }
         }
     }
