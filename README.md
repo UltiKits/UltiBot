@@ -1,5 +1,25 @@
 # UltiBot
 
+> **⚠ Discontinued (2026-09-12).** This module is no longer maintained. Its NMS-based fake-player
+> bridge builds the exact internal `ServerPlayer` object type the real game server uses, wired to a
+> fake network connection — a technique that reaches directly into Minecraft's own internal,
+> unstable server classes, which Mojang does not promise to keep stable between versions. A
+> measurement taken on 2026-09-11 (`UltiKits/UltiTools-Reborn` Phase 15,
+> `15-ULTIBOT-NMS-PROBE.md`) found that porting the bridge to the current supported server version
+> was mechanically feasible — the only compile breaks found were plain renamed-method
+> substitutions, none at the five sites judged most likely to need a structural redesign — but the
+> maintainer decided against continuing to carry that standing cost across every future server
+> update, citing ongoing maintenance burden rather than this round's measured difficulty:
+>
+> > 「停止并下架UltiBot，维护成本太高」— "Stop and discontinue UltiBot; the maintenance cost is too
+> > high." (maintainer decision, 2026-09-12, recorded by agent on the maintainer's behalf)
+>
+> This module currently declares support only for two specific past Paper server versions and is
+> not compatible with, and will not be updated for, current or future Paper releases. No further
+> issues, pull requests, or releases will be processed for this repository. If you are relying on
+> UltiBot, plan to migrate away from it — there is no supported replacement within the UltiKits
+> ecosystem at this time.
+
 [![Java 8](https://img.shields.io/badge/Java-8-orange)](https://www.oracle.com/java/technologies/javase/javase8-archive-downloads.html)
 [![UltiTools-API](https://img.shields.io/badge/UltiTools--API-6.2.0-blue)](https://github.com/UltiKits/UltiTools-Reborn)
 [![Paper 1.21.1](https://img.shields.io/badge/Paper-1.21.1-green)](https://papermc.io/)
